@@ -1,29 +1,26 @@
 #include <iostream>
+#include <cstdlib> // for realloc
 
-int *gpVect = NULL,
-gnCount = 0,
-gnMax = 0;
+struct Vector {
+    int* m_pVect;
+    int m_nCount;
+    int m_nMax;
+    int m_nDelta;
+};
 
-void Resize()
-{
-  const int delta = 10;
-  int *pTemp, i;
-  pTemp = new int[gnMax + delta]; 
-  for(i = 0 ; i < gnMax ; i++) 
-    pTemp[i] = gpVect[i]; 
-  delete [ ] gpVect; 
-  gpVect = pTemp; 
-  gnMax += delta; 
+void Resize(Vector* pThis) {
+    pThis->m_pVect = (int*)realloc(pThis->m_pVect, sizeof(int) * (pThis->m_nMax + pThis->m_nDelta));
+    pThis->m_nMax += pThis->m_nDelta;
 }
 
-void Insert(int elem)
-{
-  if( gnCount == gnMax )
-    Resize();
-  gpVect[gnCount++] = elem;
+void Insert(Vector* pThis, int elem) {
+    if (pThis->m_nCount == pThis->m_nMax)
+        Resize(pThis);
+    pThis->m_pVect[pThis->m_nCount++] = elem;
 }
 
-int main() { 
-  Insert(10);
-  return 0;
+int main() {
+    Vector myVector = {nullptr, 0, 0, 10};
+    Insert(&myVector, 10);
+    return 0;
 }
